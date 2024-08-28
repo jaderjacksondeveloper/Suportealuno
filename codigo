@@ -1,0 +1,88 @@
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+from selenium.webdriver.common.keys import Keys
+
+# Inicia o navegador Chrome
+driver = webdriver.Chrome()
+
+# Acessa a página do WhatsApp Web
+driver.get('https://web.whatsapp.com/')
+
+# Espera 50 segundos para o usuário escanear o QR code manualmente
+time.sleep(50)
+
+# Lista de contatos para quem a mensagem será enviada
+contatos = ['Code test']
+# Mensagem a ser enviada
+mensagem = 'DS2 é a melhor em tudo'
+
+# Função para buscar e selecionar o contato no WhatsApp Web
+def buscar_contato(contato):
+    try:
+        # Aguarda o campo de pesquisa estar presente no DOM e visível
+        campo_pesquisa = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true" and @data-tab="3"]'))
+        )
+        # Clica no campo de pesquisa
+        campo_pesquisa.click()
+        # Digita o nome do contato
+        campo_pesquisa.send_keys(contato)
+        # Pressiona Enter para selecionar o contato
+        campo_pesquisa.send_keys(Keys.ENTER)
+    except Exception as e:
+        # Trata exceção e imprime uma mensagem de erro se não conseguir buscar o contato
+        print(f"Erro ao buscar contato: {e}")
+
+# Função para enviar a mensagem para o contato selecionado
+def enviar_mensagem(mensagem):
+    try:
+        # Aguarda o campo de mensagem estar presente no DOM e visível
+        campo_mensagem = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true" and @data-tab="10"]'))
+        )
+        # Clica no campo de mensagem
+        campo_mensagem.click()
+        # Digita a mensagem
+        campo_mensagem.send_keys(mensagem)
+        # Pressiona Enter para enviar a mensagem
+        campo_mensagem.send_keys(Keys.ENTER)
+    except Exception as e:
+        # Trata exceção e imprime uma mensagem de erro se não conseguir enviar a mensagem
+        print(f"Erro ao enviar mensagem: {e}")
+
+# Laço para percorrer a lista de contatos
+for contato in contatos:
+    # Chama a função para buscar o contato
+    buscar_contato(contato)
+    # Chama a função para enviar a mensagem
+    enviar_mensagem(mensagem)
+    # Aguarda 5 segundos antes de continuar para o próximo contato (se houver)
+    time.sleep(5)
+
+# Fecha o navegador após o envio das mensagens
+driver.quit()
+
+
+
+
+
+
+
+
+
+Comentários sobre as alterações:
+Uso de exceções: O código já estava utilizando exceções (try-except) para lidar com erros ao buscar contatos e enviar mensagens. 
+  Isso é uma boa prática, especialmente quando se trabalha com automação de interface gráfica, onde elementos podem não estar disponíveis imediatamente.
+
+Comentários: Adicionei comentários para explicar cada seção do código, o que torna o código mais fácil de entender para outras pessoas que possam lê-lo.
+
+Estrutura geral: O código está estruturado de maneira correta, com funções bem definidas para buscar contatos e enviar mensagens. A lógica é clara e funcional.
+
+Ajustes de tempo: O uso de time.sleep(50) é uma solução simples para esperar que o usuário escaneie o QR code no WhatsApp Web. Isso pode ser ajustado conforme a necessidade do usuário.
+
+Melhorias possíveis: Poderia ser interessante adicionar uma verificação para garantir que o WhatsApp Web esteja completamente carregado antes de começar a buscar contatos.
+  Isso pode ser feito verificando a presença de elementos específicos que indicam que a interface está pronta para uso.
